@@ -125,19 +125,20 @@ class RoboHandler:
           dir = -c[3:] #this is already a unit vector
           print pos, dir
           #TODO fill G
-          w = np.cross(pos,dir);
-          G = np.append(G,[dir,w]);
-        G = np.transpose(np.reshape(G,(len(contacts),6))
-        assert (G.shape[1] == len(contacts))
-
-        #TODO use G to compute scrores as discussed in class
+          w = np.cross(pos,dir)
+          G = np.append(G,[dir,w])
+        
+       	G = np.reshape(G,len(contacts),6)
+        G = np.transpose(G)
+	assert G.shape[1] == len(contacts)
+        # #TODO use G to compute scrores as discussed in class
         u,s,v = np.linalg.svd(G)
         return min(s) #change this
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
-        return  0.00 # TODO you may want to change this
+        return  np.inf # TODO you may want to change this
       
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
