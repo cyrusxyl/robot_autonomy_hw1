@@ -105,7 +105,16 @@ class RoboHandler:
   # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp 
   def order_grasps_noisy(self):
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
+    for grasp in self.grasps_ordered_noisy:
+        grasp=self.sample_random_grasp(grasp)
+        grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
+
+    # sort!
+    order = np.argsort(self.grasps_ordered_noisy[:,self.graspindices.get('performance')[0]])
+    order = order[::-1]
+    self.grasps_ordered_noisy = self.grasps_ordered_noisy[order]
     #TODO set the score with your evaluation function (over random samples) and sort
+
 
 
   # function to evaluate grasps
@@ -172,13 +181,19 @@ class RoboHandler:
     #sample random position
     RAND_DIST_SIGMA = 0.01 #TODO you may want to change this
     pos_orig = grasp[self.graspindices['igrasppos']]
+    pos_noise = np.random.normal(0, RAND_DIST_SIGMA, (1,3))
+    grasp[self.graspindices['igrasppos']]=pos_orig+pos_noise;
     #TODO set a random position
 
 
     #sample random orientation
     RAND_ANGLE_SIGMA = np.pi/24 #TODO you may want to change this
+    dir_noise=np.random.normal(0,RAND_ANGLE_SIGMA,(1,3))
     dir_orig = grasp[self.graspindices['igraspdir']]
     roll_orig = grasp[self.graspindices['igrasproll']]
+    grasp[self.graspindices['igraspdir']]=dir_orig+dir_noise
+    roll_noise=np.random.normal(0,RAND_ANGLE_SIGMA,(1,1))
+    grasp[self.graspindices['igrasproll']]=roll_orig+roll_noise
     #TODO set the direction and roll to be random
 
     return grasp
