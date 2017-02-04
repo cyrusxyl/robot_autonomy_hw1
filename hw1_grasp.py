@@ -48,10 +48,10 @@ class RoboHandler:
     self.problem_init()
 
     #order grasps based on your own scoring metric
-    self.order_grasps()
+    #self.order_grasps()
 
     #order grasps with noise
-    self.order_grasps_noisy()
+    #self.order_grasps_noisy()
 
 
   # the usual initialization for openrave
@@ -105,9 +105,13 @@ class RoboHandler:
   # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp 
   def order_grasps_noisy(self):
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
+    no_of_perturbations=15
     for grasp in self.grasps_ordered_noisy:
-        grasp=self.sample_random_grasp(grasp)
-        grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
+        combined_score=0
+        for _ in range(no_of_perturbations):
+	    disturbed_grasp=self.sample_random_grasp(grasp)
+            combined_score+=self.eval_grasp(disturbed_grasp)
+        grasp[self.graspindices.get('performance')] = combined_score/no_of_perturbations
 
     # sort!
     order = np.argsort(self.grasps_ordered_noisy[:,self.graspindices.get('performance')[0]])
