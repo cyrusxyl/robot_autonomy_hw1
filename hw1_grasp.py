@@ -146,7 +146,7 @@ class RoboHandler:
 	assert G.shape[1] == len(contacts)
         # #TODO use G to compute scrores as discussed in class
         u,s,v = np.linalg.svd(G)
-	if np.linalg.matrix_rank(G) == 6:
+	if np.linalg.matrix_rank(G) == 6 and mindist!=0:
           return -np.prod(s) #change this
 	else:
 	  return -Inf
