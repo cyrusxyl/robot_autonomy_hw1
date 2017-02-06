@@ -146,12 +146,15 @@ class RoboHandler:
 	assert G.shape[1] == len(contacts)
         # #TODO use G to compute scrores as discussed in class
         u,s,v = np.linalg.svd(G)
-        return np.linalg.matrix_rank(G)-np.prod(s) #change this
+	if np.linalg.matrix_rank(G) == 6:
+          return -np.prod(s) #change this
+	else:
+	  return -Inf
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
-        return  0.0 # TODO you may want to change this
+        return  -Inf # TODO you may want to change this
       
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
