@@ -51,7 +51,7 @@ class RoboHandler:
     self.order_grasps()
 
     #order grasps with noise
-    #self.order_grasps_noisy()
+    self.order_grasps_noisy()
 
 
   # the usual initialization for openrave
@@ -106,7 +106,10 @@ class RoboHandler:
   def order_grasps_noisy(self):
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
     no_of_perturbations=15
+    i = 1;
     for grasp in self.grasps_ordered_noisy:
+	print i
+	i+=1
         combined_score=0
         for _ in range(no_of_perturbations):
 	    disturbed_grasp=self.sample_random_grasp(grasp)
@@ -145,16 +148,21 @@ class RoboHandler:
         G = np.transpose(G)
 	assert G.shape[1] == len(contacts)
         # #TODO use G to compute scrores as discussed in class
-        u,s,v = np.linalg.svd(G)
+        
 	if np.linalg.matrix_rank(G) == 6 and mindist!=0:
-          return -np.prod(s) #change this
+	  try:
+	    u,s,v = np.linalg.svd(G)
+	  except:
+	    print G
+	    return 0.0
+          return np.prod(s) #change this
 	else:
-	  return -np.inf
+	  return 0.0
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
-        return  -np.inf # TODO you may want to change this
+        return 0.0 # TODO you may want to change this
       
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
