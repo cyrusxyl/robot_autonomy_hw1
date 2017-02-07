@@ -48,7 +48,7 @@ class RoboHandler:
     self.problem_init()
 
     #order grasps based on your own scoring metric
-    #self.order_grasps()
+    self.order_grasps()
 
     #order grasps with noise
     #self.order_grasps_noisy()
@@ -149,12 +149,12 @@ class RoboHandler:
 	if np.linalg.matrix_rank(G) == 6 and mindist!=0:
           return -np.prod(s) #change this
 	else:
-	  return -Inf
+	  return -np.inf
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
-        return  -Inf # TODO you may want to change this
+        return  -np.inf # TODO you may want to change this
       
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
